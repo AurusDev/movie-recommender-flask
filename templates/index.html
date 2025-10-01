@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Movie Recs - Os Melhores Filmes Estão Aqui{% endblock %}
+{% block content %}
+
+<section class="controls glassy fade-in-up">
+  <form method="{{ 'post' if mode=='lists' else 'get' }}" class="form-grid"
+    action="{{ url_for('index') if mode=='lists' else url_for('search') }}">
+    {% if mode == 'lists' %}
+    <label>
+      <span>Fonte / Categoria</span>
+      <select name="source">
+        {% for c in categories %}
+        <option value="{{ c.value }}" {% if c.value==selected %}selected{% endif %}>{{ c.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    {% endif %}
+
+    <label>
+      <span>Quantidade</span>
+      <input type="number" name="limit" min="5" max="50" step="5" value="{{ limit }}" />
+    </label>
+
+    <label>
+      <span>{{ 'Buscar por título (TMDb)' if mode=='search' else 'Filtrar por título' }}</span>
+      {% if mode == 'search' %}
+      <input type="search" name="q" placeholder="Ex: Matrix" value="{{ search_term or '' }}" />
+      {% else %}
+      <input type="search" name="query" placeholder="Ex: Matrix" value="{{ query or '' }}" />
+      {% endif %}
+    </label>
+
+    <div class="actions-inline">
+      {% if mode == 'lists' %}
+      <button class="btn primary" type="submit">Buscar ✨</button>
+      {% else %}
+      <button class="btn primary" formaction="{{ url_for('search') }}" formmethod="get" type="submit">Buscar TMDb
+        🔎</button>
+      <a class="btn ghost" href="{{ url_for('index') }}">Voltar às listas</a>
+      {% endif %}
+      <button type="button" id="toggleFavs" class="btn ghost">⭐ Meus Favoritos</button>
+    </div>
+  </form>
+</section>
+
+<section class="grid" id="cardsGrid">
+  {% for m in movies %}
+  <article class="card tilt-in" data-id="{{ (m.title ~ '-' ~ (m.year or ''))|lower|replace(' ', '_') }}"
+    data-title="{{ m.title }}" data-year="{{ m.year or '' }}" data-rating="{{ m.rating or '' }}"
+    data-overview="{{ (m.overview or '')|e }}" data-url="{{ m.url or '' }}" data-poster="{{ m.poster or '' }}"
+    data-backdrop="{{ m.backdrop or '' }}" data-source="{{ m.source }}" data-tmdb-id="{{ m.tmdb_id or '' }}">
+    <div class="poster-wrap open-modal">
+      {% if m.poster %}
+      <img loading="lazy" src="{{ m.poster }}" alt="{{ m.title }} poster" class="poster grayscale-on-hover" />
+      {% else %}
+      <div class="placeholder">🎞️</div>
+      {% endif %}
+      <span class="badge">#{{ m.rank }}</span>
+    </div>
+
+    <div class="content">
+      <h3 class="title">{{ m.title }}</h3>
+      <p class="sub">{{ m.year or '—' }} • {{ m.rating or '—' }} ⭐ • {{ m.source|upper }}</p>
+      <div class="actions">
+        <button class="btn ghost open-modal">Detalhes</button>
+        <button class="btn fav-btn" title="Favoritar">⭐</button>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+
+  {% if not movies %}
+  <div class="empty">Nada encontrado. Tente outra categoria ou termo.</div>
+  {% endif %}
+</section>
+
+<!-- Modal -->
+<div id="movieModal" class="modal">
+  <div class="modal-content glassy">
+    <button class="modal-close">✖</button>
+    <div class="modal-body">
+      <div class="modal-poster"></div>
+      <div class="modal-info">
+        <h2 class="modal-title"></h2>
+        <p class="modal-meta"></p>
+        <p class="modal-overview"></p>
+        <div class="modal-actions">
+          <a class="btn primary" target="_blank" rel="noopener" id="modalDetails">Ver mais</a>
+          <a class="btn ghost" target="_blank" rel="noopener" id="modalTrailer">🎥 Trailer</a>
+          <button class="btn fav-btn" id="modalFavBtn">⭐ Favoritar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
