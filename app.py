@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+import os
+from zoneinfo import ZoneInfo
+
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 
@@ -13,6 +16,22 @@ from scraping.tmdb import (
 load_dotenv()
 
 app = Flask(__name__)
+
+# ----------------------------
+# Timezone
+# ----------------------------
+# Permite configurar via .env (APP_TIMEZONE=America/Sao_Paulo, Europe/Lisbon, etc.)
+APP_TZ_NAME = os.getenv("APP_TIMEZONE", "America/Sao_Paulo")
+
+try:
+    APP_TZ = ZoneInfo(APP_TZ_NAME)
+except Exception:
+    # fallback seguro caso o nome do fuso esteja inválido
+    APP_TZ = ZoneInfo("UTC")
+
+def now_local() -> datetime:
+    """Retorna datetime c/ timezone no fuso configurado."""
+    return datetime.now(APP_TZ)
 
 # Categorias limpas + ícones
 CATEGORIES = [
@@ -83,7 +102,7 @@ def index():
         selected=source,
         limit=limit,
         query=query,
-        now=datetime.now(),
+        now=now_local(),                # <<< timezone-aware
         tmdb_enabled=TMDB_AVAILABLE,
     )
 
@@ -101,7 +120,7 @@ def search():
             selected="most_popular",
             limit=limit,
             query="",
-            now=datetime.now(),
+            now=now_local(),            # <<< timezone-aware
             tmdb_enabled=TMDB_AVAILABLE,
         )
     movies = search_tmdb_movies(q, limit)
@@ -113,7 +132,7 @@ def search():
         selected="tmdb_search",
         limit=limit,
         query=q,
-        now=datetime.now(),
+        now=now_local(),                # <<< timezone-aware
         tmdb_enabled=TMDB_AVAILABLE,
         search_term=q,
     )
