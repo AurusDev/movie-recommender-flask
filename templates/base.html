@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Movie Recs{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <script defer src="{{ url_for('static', filename='scripts.js') }}"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header glassy">
+      <h1 class="logo">🎬 Movie Recs</h1>
+      <div class="meta">
+        <span class="ping"></span>
+        <span>Atualizado: {{ now.strftime('%d/%m/%Y %H:%M') }}</span>
+      </div>
+    </header>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+      <p>
+        Developed by <strong class="gradient-text">Arthur Monteiro</strong>
+    </footer>
+  </div>
+</body>
+</html>

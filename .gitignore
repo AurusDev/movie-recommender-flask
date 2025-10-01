@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite
+.env
+.imdb_cache/
+.tmdb_cache/
+.vscode/
+.idea/

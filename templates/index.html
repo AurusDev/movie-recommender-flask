@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Movie Recs - Seu Catálogo de Filmes{% endblock %}
+{% block content %}
+<section class="controls glassy fade-in-up">
+  <form method="post" class="form-grid">
+    <label>
+      <span>Fonte / Categoria</span>
+      <select name="source">
+        {% for c in categories %}
+          <option value="{{ c.value }}" {% if c.value == selected %}selected{% endif %}>{{ c.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>
+      <span>Quantidade</span>
+      <input type="number" name="limit" min="5" max="50" step="5" value="{{ limit }}" />
+    </label>
+
+    <label>
+      <span>Filtrar por título</span>
+      <input type="search" name="query" placeholder="Ex: Matrix" value="{{ query }}" />
+    </label>
+
+    <button class="btn primary" type="submit">Buscar ✨</button>
+  </form>
+</section>
+
+<section class="grid">
+  {% for m in movies %}
+  <article class="card tilt-in">
+    <div class="poster-wrap">
+      <a href="{{ m.url or '#' }}" target="_blank" rel="noopener">
+        {% if m.poster %}
+          <img loading="lazy" src="{{ m.poster }}" alt="{{ m.title }} poster" class="poster grayscale-on-hover"/>
+        {% else %}
+          <div class="placeholder">🎞️</div>
+        {% endif %}
+        <span class="badge">#{{ m.rank }}</span>
+      </a>
+
+      {% if m.overview %}
+      <div class="overlay">
+        <p>{{ m.overview }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="content">
+      <h3 class="title">{{ m.title }}</h3>
+      <p class="sub">{{ m.year or '—' }} • {{ m.rating or '—' }} ⭐ • {{ m.source|upper }}</p>
+      <div class="actions">
+        <a class="btn ghost" href="{{ m.url or '#' }}" target="_blank">Detalhes</a>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+
+  {% if not movies %}
+  <div class="empty">Nada encontrado. Tente outra categoria ou termo.</div>
+  {% endif %}
+</section>
+{% endblock %}
