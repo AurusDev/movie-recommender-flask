@@ -82,7 +82,7 @@ Abra no navegador: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 ---
 
 ## 🖼️ Screenshots
-(adicione imagens reais depois do deploy)
+![Movie Recs Screenshot](docs/screenshot.png)
 
 ---
 
@@ -94,4 +94,3 @@ IMDb e TMDb são marcas registradas — este projeto é apenas uma integração.
 
 ## 👨‍💻 Autor
 **Arthur Monteiro**  
-Desenvolvido com 💜 e Flask ⚡
